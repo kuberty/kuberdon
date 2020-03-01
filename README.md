@@ -1,7 +1,7 @@
 # Kuberdon
 **Stop copying your docker registry secrets to each namespace, use Kuberdon instead.**
 
-Kuberdon is a dead simple controller. It copies your secret to all desired namespaces and optionally adds it automatically as an image-pull-secret.
+Kuberdon is a dead simple controller. It copies your secret to all desired namespaces and automatically binds them to the default serviceaccount.
 
 ```yaml
 apiVersion: kuberdon.kuberty.io/v1
@@ -13,7 +13,6 @@ spec:
   secret: kuberty-gitlab-read-secret
   namespaces:
   - name: "*"
-    add-automatically: true
 ```
 
 Do you want to exclude a namespace?
@@ -32,3 +31,9 @@ spec:
     add-automatically: true
 ```
 Note that the higher the namespace rule, the higher its priority.
+
+## Similar projects
+[titansoft-pte-ltd/imagepullsecret-patcher](https://github.com/titansoft-pte-ltd/imagepullsecret-patcher): Very similar, though not kubernetes native (does not use the kubectl api)
+
+## Documentation
+To avoid collissions, kuberdon prefixes all deployed secrets with 'kuberdon-'.
