@@ -16,7 +16,7 @@ spec:
     add-automatically: true
 ```
 
-Want to exclude a namespace (rules follow the priority of the namespace list):
+Do you want to exclude a namespace?
 ```yaml
 apiVersion: kuberdon.kuberty.io/v1
 kind: Registry
@@ -31,3 +31,4 @@ spec:
   - name: "*"
     add-automatically: true
 ```
+Note that the higher the namespace rule, the higher it's priority.
