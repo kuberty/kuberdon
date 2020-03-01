@@ -31,4 +31,4 @@ spec:
   - name: "*"
     add-automatically: true
 ```
-Note that the higher the namespace rule, the higher it's priority.
+Note that the higher the namespace rule, the higher its priority.
