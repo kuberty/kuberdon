@@ -8,7 +8,7 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 
-	clientV1beta1 "github.com/kuberty/kuberdon/pkg/generated/clientset/versioned"
+	clientV1beta1 "github.com/kuberty/kuberdon/pkg/client/clientset/versioned"
 
 )
 

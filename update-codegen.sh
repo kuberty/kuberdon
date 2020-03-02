@@ -11,7 +11,15 @@ cp -rf . $GOPATH/src/$ROOT_PACKAGE/
 
 go get -u k8s.io/code-generator/...
 
-
+PROJECT_DIR=$PWD
 cd $GOPATH/src/k8s.io/code-generator
 
 ./generate-groups.sh all "$ROOT_PACKAGE/pkg/client" "$ROOT_PACKAGE/pkg/apis" "$CUSTOM_RESOURCE_NAME:$CUSTOM_RESOURCE_VERSION"
+
+
+cd $PROJECT_DIR
+rm -rf pkg/client/
+
+mv $GOPATH/src/$ROOT_PACKAGE/pkg/client/clientset pkg/client/
+mv $GOPATH/src/$ROOT_PACKAGE/pkg/client/listers pkg/client/
+mv $GOPATH/src/$ROOT_PACKAGE/pkg/client/informers pkg/client/
