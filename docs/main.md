@@ -1,6 +1,11 @@
 
 ## Documentation
 This is a specification of the inner workings of kuberdon, you should not worry about it.
+### CRD
+- [Openshift guide to creating a CRD with kubernetes code-generator](https://blog.openshift.com/kubernetes-deep-dive-code-generation-customresources/)
+- [Guide to creating a Custom Resource Definition](https://github.com/jinghzhu/KubernetesCRD)
+- [Code-generator](https://github.com/kubernetes/code-generator)
+
 ### Collission-avoidance
 To avoid collissions, kuberdon prefixes all deployed secrets with 'kuberdon-'. 
 
