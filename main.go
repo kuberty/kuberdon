@@ -1,14 +1,20 @@
 package main
 // Attribution to martin-helmich: https://github.com/martin-helmich/kubernetes-crd-example
+// Attribution to Kubernetes	: https://github.com/kubernetes/sample-controller/blob/master/main.go
 
 import (
 	"flag"
+	"k8s.io/client-go/tools/cache"
+	"log"
+	"time"
 
-	"k8s.io/client-go/kubernetes/scheme"
+	kubeinformers "k8s.io/client-go/informers"
+	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 
-	clientV1beta1 "github.com/kuberty/kuberdon/pkg/client/clientset/versioned"
+	clienset "github.com/kuberty/kuberdon/pkg/client/clientset/versioned"
+	informers "github.com/kuberty/kuberdon/pkg/client/informers/externalversions"
 
 )
 
@@ -24,6 +30,7 @@ func main() {
 	var config *rest.Config
 	var err error
 
+
 	if kubeconfig == "" {
 		log.Printf("using in-cluster configuration")
 		config, err = rest.InClusterConfig()
@@ -36,26 +43,30 @@ func main() {
 		panic(err)
 	}
 
-	clientSet, err := clientV1beta1.NewForConfig(config)
+	kubeClient, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		panic(err)
 	}
 
-	registries, err := clientSet.Registries("").List(metav1.ListOptions{})
+
+	exampleClient, err := clienset.NewForConfig(config)
 	if err != nil {
 		panic(err)
 	}
+	kubeInformerFactory := kubeinformers.NewSharedInformerFactory(kubeClient, time.Second*30)
+	exampleInformerFactory := informers.NewSharedInformerFactory(exampleClient, time.Second*30)
 
-	fmt.Printf("registries found: %+v\n", registries)
+	// define controller
+	mockSignalHandler := make(chan struct{})
+	kubeInformerFactory.Start(mockSignalHandler)
+	exampleInformerFactory.Start(mockSignalHandler)
 
-	store := WatchResources(clientSet)
-
-	for {
-		registriesFromStore := store.List()
-		fmt.Printf("Registries in store: %+v\n", registriesFromStore))
-
-		time.Sleep(2 * time.Second)
-	}
-
-
+	exampleInformerFactory.Kuberdon().V1beta1().Registries().Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
+		AddFunc: func(obj interface{}) {
+			log.Printf("Added: %v", obj)
+		} ,
+		UpdateFunc: func(old, new interface{}) {
+			log.Printf("Changed from %v to %v", old, new)
+		},
+	})
 }
