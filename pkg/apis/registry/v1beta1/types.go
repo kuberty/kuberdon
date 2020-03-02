@@ -28,3 +28,14 @@ type RegistryStatus struct {
 type NamespaceFilter struct {
 	Name string `json:"name"`
 }
+
+
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+// FooList is a list of Foo resources
+type RegistryList struct {
+	metav1.TypeMeta `json:",inline"`
+	metav1.ListMeta `json:"metadata"`
+
+	Items []Registry `json:"items"`
+}
