@@ -1,12 +1,18 @@
-package v1
+package v1beta1
+
+import metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+
+// +genclient
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 type Registry struct {
 	metav1.TypeMeta `json:",inline"`
 	// Standard object's metadata.
 	metav1.ObjectMeta `json:"metadata"`
 
-	Spec CakeSpec `json:"spec"`
-	Status CakeStatus `json:"status"`
+	Spec RegistrySpec `json:"spec"`
+	Status RegistryStatus `json:"status"`
 }
 
 type RegistrySpec struct {
