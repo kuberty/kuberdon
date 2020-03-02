@@ -3,9 +3,7 @@ kind: CustomResourceDefinition
 metadata:
   name: registry.kuberdon.kuberty.io
 spec:
-  # group name to use for REST API: /apis/<group>/<version>
-  group: stable.example.com
-  # list of versions supported by this CustomResourceDefinition
+  group: kuberdon.kuberty.io
   versions:
     - name: v1beta1
       served: true
