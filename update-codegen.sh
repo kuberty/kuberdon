@@ -19,7 +19,7 @@ cd $GOPATH/src/k8s.io/code-generator
 
 cd $PROJECT_DIR
 rm -rf pkg/client/
-
+mkdir -p pkg/client/
 mv $GOPATH/src/$ROOT_PACKAGE/pkg/client/clientset pkg/client/
 mv $GOPATH/src/$ROOT_PACKAGE/pkg/client/listers pkg/client/
 mv $GOPATH/src/$ROOT_PACKAGE/pkg/client/informers pkg/client/
