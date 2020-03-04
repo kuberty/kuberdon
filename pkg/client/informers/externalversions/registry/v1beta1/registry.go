@@ -19,7 +19,6 @@ limitations under the License.
 package v1beta1
 
 import (
-	"context"
 	time "time"
 
 	registryv1beta1 "github.com/kuberty/kuberdon/pkg/apis/registry/v1beta1"
@@ -62,13 +61,13 @@ func NewFilteredRegistryInformer(client versioned.Interface, namespace string, r
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.KuberdonV1beta1().Registries(namespace).List(context.TODO(), options)
+				return client.KuberdonV1beta1().Registries(namespace).List(options)
 			},
 			WatchFunc: func(options v1.ListOptions) (watch.Interface, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.KuberdonV1beta1().Registries(namespace).Watch(context.TODO(), options)
+				return client.KuberdonV1beta1().Registries(namespace).Watch(options)
 			},
 		},
 		&registryv1beta1.Registry{},

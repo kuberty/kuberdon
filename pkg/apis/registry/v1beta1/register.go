@@ -30,6 +30,7 @@ func addKnownTypes(scheme *runtime.Scheme) error {
 	scheme.AddKnownTypes(
 		SchemeGroupVersion,
 		&Registry{},
+		&RegistryList{},
 	)
 
 	// register the type in the scheme
