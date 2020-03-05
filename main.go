@@ -4,6 +4,9 @@ package main
 
 import (
 	"flag"
+	"github.com/kuberty/kuberdon/pkg/apis/registry/v1beta1"
+	v1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/client-go/tools/cache"
 	"log"
 	"time"
@@ -15,7 +18,6 @@ import (
 
 	clienset "github.com/kuberty/kuberdon/pkg/client/clientset/versioned"
 	informers "github.com/kuberty/kuberdon/pkg/client/informers/externalversions"
-
 )
 
 var kubeconfig string
@@ -58,15 +60,48 @@ func main() {
 
 	// define controller
 	mockSignalHandler := make(chan struct{})
-	kubeInformerFactory.Start(mockSignalHandler)
-	exampleInformerFactory.Start(mockSignalHandler)
 
 	exampleInformerFactory.Kuberdon().V1beta1().Registries().Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
-			log.Printf("Added: %v", obj)
+			registry := obj.(*v1beta1.Registry)
+			log.Printf("Added registry: %v", registry.Name)
 		} ,
 		UpdateFunc: func(old, new interface{}) {
-			log.Printf("Changed from %v to %v", old, new)
+			registry := new.(*v1beta1.Registry).DeepCopy()
+			namespaces, err := kubeInformerFactory.Core().V1().Namespaces().Lister().List(labels.Everything())
+			if err != nil {
+				log.Panic(err)
+			}
+			if registry.GetLabels() == nil{
+				registry.SetLabels(map[string]string{})
+			}
+			labels := registry.GetLabels()
+			labels["a"] = "b"
+			registry.SetLabels(labels)
+			registry.SetNamespace("test")
+			r, err := exampleClient.KuberdonV1beta1().Registries().Update(registry)
+			log.Printf("R: %v, E: %v", r, err)
+			for _, n := range namespaces {
+				log.Printf("namespace: %v", n.Name)
+			}
+			log.Printf("Changed registry to: %v", registry.Spec.Namespaces[0].Name)
 		},
 	})
+
+	kubeInformerFactory.Core().V1().Namespaces().Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
+		AddFunc: func(obj interface{}) {
+			namespace := obj.(*v1.Namespace)
+			log.Printf("Added namespace: %v", namespace.Name)
+		} ,
+		UpdateFunc: func(old, new interface{}) {
+			namespace := new.(*v1.Namespace)
+			log.Printf("Changed to namespace: %v", namespace.Name)
+		},
+	})
+
+	kubeInformerFactory.Start(mockSignalHandler)
+	exampleInformerFactory.Start(mockSignalHandler)
+	for {
+		time.Sleep(10 * time.Second)
+	}
 }

@@ -34,8 +34,8 @@ type KuberdonV1beta1Client struct {
 	restClient rest.Interface
 }
 
-func (c *KuberdonV1beta1Client) Registries(namespace string) RegistryInterface {
-	return newRegistries(c, namespace)
+func (c *KuberdonV1beta1Client) Registries() RegistryInterface {
+	return newRegistries(c)
 }
 
 // NewForConfig creates a new KuberdonV1beta1Client for the given config.

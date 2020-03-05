@@ -21,7 +21,3 @@ package v1beta1
 // RegistryListerExpansion allows custom methods to be added to
 // RegistryLister.
 type RegistryListerExpansion interface{}
-
-// RegistryNamespaceListerExpansion allows custom methods to be added to
-// RegistryNamespaceLister.
-type RegistryNamespaceListerExpansion interface{}

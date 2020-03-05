@@ -41,5 +41,5 @@ func New(f internalinterfaces.SharedInformerFactory, namespace string, tweakList
 
 // Registries returns a RegistryInformer.
 func (v *version) Registries() RegistryInformer {
-	return &registryInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
+	return &registryInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
 }

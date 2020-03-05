@@ -29,8 +29,8 @@ import (
 type RegistryLister interface {
 	// List lists all Registries in the indexer.
 	List(selector labels.Selector) (ret []*v1beta1.Registry, err error)
-	// Registries returns an object that can list and get Registries.
-	Registries(namespace string) RegistryNamespaceLister
+	// Get retrieves the Registry from the index for a given name.
+	Get(name string) (*v1beta1.Registry, error)
 	RegistryListerExpansion
 }
 
@@ -52,38 +52,9 @@ func (s *registryLister) List(selector labels.Selector) (ret []*v1beta1.Registry
 	return ret, err
 }
 
-// Registries returns an object that can list and get Registries.
-func (s *registryLister) Registries(namespace string) RegistryNamespaceLister {
-	return registryNamespaceLister{indexer: s.indexer, namespace: namespace}
-}
-
-// RegistryNamespaceLister helps list and get Registries.
-type RegistryNamespaceLister interface {
-	// List lists all Registries in the indexer for a given namespace.
-	List(selector labels.Selector) (ret []*v1beta1.Registry, err error)
-	// Get retrieves the Registry from the indexer for a given namespace and name.
-	Get(name string) (*v1beta1.Registry, error)
-	RegistryNamespaceListerExpansion
-}
-
-// registryNamespaceLister implements the RegistryNamespaceLister
-// interface.
-type registryNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all Registries in the indexer for a given namespace.
-func (s registryNamespaceLister) List(selector labels.Selector) (ret []*v1beta1.Registry, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1beta1.Registry))
-	})
-	return ret, err
-}
-
-// Get retrieves the Registry from the indexer for a given namespace and name.
-func (s registryNamespaceLister) Get(name string) (*v1beta1.Registry, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
+// Get retrieves the Registry from the index for a given name.
+func (s *registryLister) Get(name string) (*v1beta1.Registry, error) {
+	obj, exists, err := s.indexer.GetByKey(name)
 	if err != nil {
 		return nil, err
 	}

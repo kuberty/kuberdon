@@ -32,7 +32,7 @@ import (
 // RegistriesGetter has a method to return a RegistryInterface.
 // A group's client should implement this interface.
 type RegistriesGetter interface {
-	Registries(namespace string) RegistryInterface
+	Registries() RegistryInterface
 }
 
 // RegistryInterface has methods to work with Registry resources.
@@ -52,14 +52,12 @@ type RegistryInterface interface {
 // registries implements RegistryInterface
 type registries struct {
 	client rest.Interface
-	ns     string
 }
 
 // newRegistries returns a Registries
-func newRegistries(c *KuberdonV1beta1Client, namespace string) *registries {
+func newRegistries(c *KuberdonV1beta1Client) *registries {
 	return &registries{
 		client: c.RESTClient(),
-		ns:     namespace,
 	}
 }
 
@@ -67,7 +65,6 @@ func newRegistries(c *KuberdonV1beta1Client, namespace string) *registries {
 func (c *registries) Get(name string, options v1.GetOptions) (result *v1beta1.Registry, err error) {
 	result = &v1beta1.Registry{}
 	err = c.client.Get().
-		Namespace(c.ns).
 		Resource("registries").
 		Name(name).
 		VersionedParams(&options, scheme.ParameterCodec).
@@ -84,7 +81,6 @@ func (c *registries) List(opts v1.ListOptions) (result *v1beta1.RegistryList, er
 	}
 	result = &v1beta1.RegistryList{}
 	err = c.client.Get().
-		Namespace(c.ns).
 		Resource("registries").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -101,7 +97,6 @@ func (c *registries) Watch(opts v1.ListOptions) (watch.Interface, error) {
 	}
 	opts.Watch = true
 	return c.client.Get().
-		Namespace(c.ns).
 		Resource("registries").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -112,7 +107,6 @@ func (c *registries) Watch(opts v1.ListOptions) (watch.Interface, error) {
 func (c *registries) Create(registry *v1beta1.Registry) (result *v1beta1.Registry, err error) {
 	result = &v1beta1.Registry{}
 	err = c.client.Post().
-		Namespace(c.ns).
 		Resource("registries").
 		Body(registry).
 		Do().
@@ -124,7 +118,6 @@ func (c *registries) Create(registry *v1beta1.Registry) (result *v1beta1.Registr
 func (c *registries) Update(registry *v1beta1.Registry) (result *v1beta1.Registry, err error) {
 	result = &v1beta1.Registry{}
 	err = c.client.Put().
-		Namespace(c.ns).
 		Resource("registries").
 		Name(registry.Name).
 		Body(registry).
@@ -139,7 +132,6 @@ func (c *registries) Update(registry *v1beta1.Registry) (result *v1beta1.Registr
 func (c *registries) UpdateStatus(registry *v1beta1.Registry) (result *v1beta1.Registry, err error) {
 	result = &v1beta1.Registry{}
 	err = c.client.Put().
-		Namespace(c.ns).
 		Resource("registries").
 		Name(registry.Name).
 		SubResource("status").
@@ -152,7 +144,6 @@ func (c *registries) UpdateStatus(registry *v1beta1.Registry) (result *v1beta1.R
 // Delete takes name of the registry and deletes it. Returns an error if one occurs.
 func (c *registries) Delete(name string, options *v1.DeleteOptions) error {
 	return c.client.Delete().
-		Namespace(c.ns).
 		Resource("registries").
 		Name(name).
 		Body(options).
@@ -167,7 +158,6 @@ func (c *registries) DeleteCollection(options *v1.DeleteOptions, listOptions v1.
 		timeout = time.Duration(*listOptions.TimeoutSeconds) * time.Second
 	}
 	return c.client.Delete().
-		Namespace(c.ns).
 		Resource("registries").
 		VersionedParams(&listOptions, scheme.ParameterCodec).
 		Timeout(timeout).
@@ -180,7 +170,6 @@ func (c *registries) DeleteCollection(options *v1.DeleteOptions, listOptions v1.
 func (c *registries) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1beta1.Registry, err error) {
 	result = &v1beta1.Registry{}
 	err = c.client.Patch(pt).
-		Namespace(c.ns).
 		Resource("registries").
 		SubResource(subresources...).
 		Name(name).

@@ -28,8 +28,8 @@ type FakeKuberdonV1beta1 struct {
 	*testing.Fake
 }
 
-func (c *FakeKuberdonV1beta1) Registries(namespace string) v1beta1.RegistryInterface {
-	return &FakeRegistries{c, namespace}
+func (c *FakeKuberdonV1beta1) Registries() v1beta1.RegistryInterface {
+	return &FakeRegistries{c}
 }
 
 // RESTClient returns a RESTClient that is used to communicate
