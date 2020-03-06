@@ -4,6 +4,7 @@ package main
 
 import (
 	"flag"
+	"kuberdon/pkg/listener"
 	"log"
 	"time"
 
@@ -95,7 +96,7 @@ func main() {
 	//	},
 	//})
 
-	c:=	listenToChanges(exampleInformerFactory, kubeInformerFactory)
+	c:=	listener.GetEventStream(exampleInformerFactory, kubeInformerFactory)
 	kubeInformerFactory.Start(mockSignalHandler)
 	exampleInformerFactory.Start(mockSignalHandler)
 	for v := range c {
