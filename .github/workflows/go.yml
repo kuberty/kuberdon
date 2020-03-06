@@ -18,7 +18,7 @@ jobs:
     - name: Check out the kubernetes project
       uses: actions/checkout@v2
       with:
-        repository: https://github.com/kubernetes/kubernetes
+        repository: kubernetes/kubernetes
         ref: v1.17.3
         path: .
         
@@ -45,7 +45,7 @@ jobs:
     - name: Check out the kubernetes project
       uses: actions/checkout@v2
       with:
-        repository: https://github.com/kubernetes/kubernetes
+        repository: kubernetes/kubernetes
         ref: v1.17.3
         path: .
         
