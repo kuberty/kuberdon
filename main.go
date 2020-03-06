@@ -99,8 +99,8 @@ func main() {
 	c:=	listener.GetEventStream(exampleInformerFactory, kubeInformerFactory)
 	kubeInformerFactory.Start(mockSignalHandler)
 	exampleInformerFactory.Start(mockSignalHandler)
-	for v := range c {
-		print("Updated %v", v)
+	for _ := range c {
+		print("Updated")
 	}
 	for {
 		time.Sleep(10 * time.Second)
