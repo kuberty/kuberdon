@@ -1,4 +1,5 @@
 package main
+
 const controllerAgentName = "kuberdon-controller"
 
 const (
@@ -9,6 +10,3 @@ const (
 	MessageSecretAlreadyExists = "Secret %q already exists and is not managed by this kuberdon controller."
 	MessageSynced = "Kuberdon synced %d	secrets."
 )
-
-
-

@@ -19,6 +19,7 @@ limitations under the License.
 package v1beta1
 
 import (
+	"context"
 	"time"
 
 	v1beta1 "github.com/kuberty/kuberdon/pkg/apis/registry/v1beta1"
@@ -37,15 +38,15 @@ type RegistriesGetter interface {
 
 // RegistryInterface has methods to work with Registry resources.
 type RegistryInterface interface {
-	Create(*v1beta1.Registry) (*v1beta1.Registry, error)
-	Update(*v1beta1.Registry) (*v1beta1.Registry, error)
-	UpdateStatus(*v1beta1.Registry) (*v1beta1.Registry, error)
-	Delete(name string, options *v1.DeleteOptions) error
-	DeleteCollection(options *v1.DeleteOptions, listOptions v1.ListOptions) error
-	Get(name string, options v1.GetOptions) (*v1beta1.Registry, error)
-	List(opts v1.ListOptions) (*v1beta1.RegistryList, error)
-	Watch(opts v1.ListOptions) (watch.Interface, error)
-	Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1beta1.Registry, err error)
+	Create(ctx context.Context, registry *v1beta1.Registry, opts v1.CreateOptions) (*v1beta1.Registry, error)
+	Update(ctx context.Context, registry *v1beta1.Registry, opts v1.UpdateOptions) (*v1beta1.Registry, error)
+	UpdateStatus(ctx context.Context, registry *v1beta1.Registry, opts v1.UpdateOptions) (*v1beta1.Registry, error)
+	Delete(ctx context.Context, name string, opts *v1.DeleteOptions) error
+	DeleteCollection(ctx context.Context, opts *v1.DeleteOptions, listOpts v1.ListOptions) error
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1beta1.Registry, error)
+	List(ctx context.Context, opts v1.ListOptions) (*v1beta1.RegistryList, error)
+	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1beta1.Registry, err error)
 	RegistryExpansion
 }
 
@@ -62,19 +63,19 @@ func newRegistries(c *KuberdonV1beta1Client) *registries {
 }
 
 // Get takes name of the registry, and returns the corresponding registry object, and an error if there is any.
-func (c *registries) Get(name string, options v1.GetOptions) (result *v1beta1.Registry, err error) {
+func (c *registries) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1beta1.Registry, err error) {
 	result = &v1beta1.Registry{}
 	err = c.client.Get().
 		Resource("registries").
 		Name(name).
 		VersionedParams(&options, scheme.ParameterCodec).
-		Do().
+		Do(ctx).
 		Into(result)
 	return
 }
 
 // List takes label and field selectors, and returns the list of Registries that match those selectors.
-func (c *registries) List(opts v1.ListOptions) (result *v1beta1.RegistryList, err error) {
+func (c *registries) List(ctx context.Context, opts v1.ListOptions) (result *v1beta1.RegistryList, err error) {
 	var timeout time.Duration
 	if opts.TimeoutSeconds != nil {
 		timeout = time.Duration(*opts.TimeoutSeconds) * time.Second
@@ -84,13 +85,13 @@ func (c *registries) List(opts v1.ListOptions) (result *v1beta1.RegistryList, er
 		Resource("registries").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
-		Do().
+		Do(ctx).
 		Into(result)
 	return
 }
 
 // Watch returns a watch.Interface that watches the requested registries.
-func (c *registries) Watch(opts v1.ListOptions) (watch.Interface, error) {
+func (c *registries) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	var timeout time.Duration
 	if opts.TimeoutSeconds != nil {
 		timeout = time.Duration(*opts.TimeoutSeconds) * time.Second
@@ -100,59 +101,61 @@ func (c *registries) Watch(opts v1.ListOptions) (watch.Interface, error) {
 		Resource("registries").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
-		Watch()
+		Watch(ctx)
 }
 
 // Create takes the representation of a registry and creates it.  Returns the server's representation of the registry, and an error, if there is any.
-func (c *registries) Create(registry *v1beta1.Registry) (result *v1beta1.Registry, err error) {
+func (c *registries) Create(ctx context.Context, registry *v1beta1.Registry, opts v1.CreateOptions) (result *v1beta1.Registry, err error) {
 	result = &v1beta1.Registry{}
 	err = c.client.Post().
 		Resource("registries").
+		VersionedParams(&opts, scheme.ParameterCodec).
 		Body(registry).
-		Do().
+		Do(ctx).
 		Into(result)
 	return
 }
 
 // Update takes the representation of a registry and updates it. Returns the server's representation of the registry, and an error, if there is any.
-func (c *registries) Update(registry *v1beta1.Registry) (result *v1beta1.Registry, err error) {
+func (c *registries) Update(ctx context.Context, registry *v1beta1.Registry, opts v1.UpdateOptions) (result *v1beta1.Registry, err error) {
 	result = &v1beta1.Registry{}
 	err = c.client.Put().
 		Resource("registries").
 		Name(registry.Name).
+		VersionedParams(&opts, scheme.ParameterCodec).
 		Body(registry).
-		Do().
+		Do(ctx).
 		Into(result)
 	return
 }
 
 // UpdateStatus was generated because the type contains a Status member.
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-
-func (c *registries) UpdateStatus(registry *v1beta1.Registry) (result *v1beta1.Registry, err error) {
+func (c *registries) UpdateStatus(ctx context.Context, registry *v1beta1.Registry, opts v1.UpdateOptions) (result *v1beta1.Registry, err error) {
 	result = &v1beta1.Registry{}
 	err = c.client.Put().
 		Resource("registries").
 		Name(registry.Name).
 		SubResource("status").
+		VersionedParams(&opts, scheme.ParameterCodec).
 		Body(registry).
-		Do().
+		Do(ctx).
 		Into(result)
 	return
 }
 
 // Delete takes name of the registry and deletes it. Returns an error if one occurs.
-func (c *registries) Delete(name string, options *v1.DeleteOptions) error {
+func (c *registries) Delete(ctx context.Context, name string, options *v1.DeleteOptions) error {
 	return c.client.Delete().
 		Resource("registries").
 		Name(name).
 		Body(options).
-		Do().
+		Do(ctx).
 		Error()
 }
 
 // DeleteCollection deletes a collection of objects.
-func (c *registries) DeleteCollection(options *v1.DeleteOptions, listOptions v1.ListOptions) error {
+func (c *registries) DeleteCollection(ctx context.Context, options *v1.DeleteOptions, listOptions v1.ListOptions) error {
 	var timeout time.Duration
 	if listOptions.TimeoutSeconds != nil {
 		timeout = time.Duration(*listOptions.TimeoutSeconds) * time.Second
@@ -162,19 +165,20 @@ func (c *registries) DeleteCollection(options *v1.DeleteOptions, listOptions v1.
 		VersionedParams(&listOptions, scheme.ParameterCodec).
 		Timeout(timeout).
 		Body(options).
-		Do().
+		Do(ctx).
 		Error()
 }
 
 // Patch applies the patch and returns the patched registry.
-func (c *registries) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1beta1.Registry, err error) {
+func (c *registries) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1beta1.Registry, err error) {
 	result = &v1beta1.Registry{}
 	err = c.client.Patch(pt).
 		Resource("registries").
-		SubResource(subresources...).
 		Name(name).
+		SubResource(subresources...).
+		VersionedParams(&opts, scheme.ParameterCodec).
 		Body(data).
-		Do().
+		Do(ctx).
 		Into(result)
 	return
 }

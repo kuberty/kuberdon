@@ -19,6 +19,8 @@ limitations under the License.
 package fake
 
 import (
+	"context"
+
 	v1beta1 "github.com/kuberty/kuberdon/pkg/apis/registry/v1beta1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	labels "k8s.io/apimachinery/pkg/labels"
@@ -38,7 +40,7 @@ var registriesResource = schema.GroupVersionResource{Group: "kuberdon.kuberty.io
 var registriesKind = schema.GroupVersionKind{Group: "kuberdon.kuberty.io", Version: "v1beta1", Kind: "Registry"}
 
 // Get takes name of the registry, and returns the corresponding registry object, and an error if there is any.
-func (c *FakeRegistries) Get(name string, options v1.GetOptions) (result *v1beta1.Registry, err error) {
+func (c *FakeRegistries) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1beta1.Registry, err error) {
 	obj, err := c.Fake.
 		Invokes(testing.NewRootGetAction(registriesResource, name), &v1beta1.Registry{})
 	if obj == nil {
@@ -48,7 +50,7 @@ func (c *FakeRegistries) Get(name string, options v1.GetOptions) (result *v1beta
 }
 
 // List takes label and field selectors, and returns the list of Registries that match those selectors.
-func (c *FakeRegistries) List(opts v1.ListOptions) (result *v1beta1.RegistryList, err error) {
+func (c *FakeRegistries) List(ctx context.Context, opts v1.ListOptions) (result *v1beta1.RegistryList, err error) {
 	obj, err := c.Fake.
 		Invokes(testing.NewRootListAction(registriesResource, registriesKind, opts), &v1beta1.RegistryList{})
 	if obj == nil {
@@ -69,13 +71,13 @@ func (c *FakeRegistries) List(opts v1.ListOptions) (result *v1beta1.RegistryList
 }
 
 // Watch returns a watch.Interface that watches the requested registries.
-func (c *FakeRegistries) Watch(opts v1.ListOptions) (watch.Interface, error) {
+func (c *FakeRegistries) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
 		InvokesWatch(testing.NewRootWatchAction(registriesResource, opts))
 }
 
 // Create takes the representation of a registry and creates it.  Returns the server's representation of the registry, and an error, if there is any.
-func (c *FakeRegistries) Create(registry *v1beta1.Registry) (result *v1beta1.Registry, err error) {
+func (c *FakeRegistries) Create(ctx context.Context, registry *v1beta1.Registry, opts v1.CreateOptions) (result *v1beta1.Registry, err error) {
 	obj, err := c.Fake.
 		Invokes(testing.NewRootCreateAction(registriesResource, registry), &v1beta1.Registry{})
 	if obj == nil {
@@ -85,7 +87,7 @@ func (c *FakeRegistries) Create(registry *v1beta1.Registry) (result *v1beta1.Reg
 }
 
 // Update takes the representation of a registry and updates it. Returns the server's representation of the registry, and an error, if there is any.
-func (c *FakeRegistries) Update(registry *v1beta1.Registry) (result *v1beta1.Registry, err error) {
+func (c *FakeRegistries) Update(ctx context.Context, registry *v1beta1.Registry, opts v1.UpdateOptions) (result *v1beta1.Registry, err error) {
 	obj, err := c.Fake.
 		Invokes(testing.NewRootUpdateAction(registriesResource, registry), &v1beta1.Registry{})
 	if obj == nil {
@@ -96,7 +98,7 @@ func (c *FakeRegistries) Update(registry *v1beta1.Registry) (result *v1beta1.Reg
 
 // UpdateStatus was generated because the type contains a Status member.
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeRegistries) UpdateStatus(registry *v1beta1.Registry) (*v1beta1.Registry, error) {
+func (c *FakeRegistries) UpdateStatus(ctx context.Context, registry *v1beta1.Registry, opts v1.UpdateOptions) (*v1beta1.Registry, error) {
 	obj, err := c.Fake.
 		Invokes(testing.NewRootUpdateSubresourceAction(registriesResource, "status", registry), &v1beta1.Registry{})
 	if obj == nil {
@@ -106,14 +108,14 @@ func (c *FakeRegistries) UpdateStatus(registry *v1beta1.Registry) (*v1beta1.Regi
 }
 
 // Delete takes name of the registry and deletes it. Returns an error if one occurs.
-func (c *FakeRegistries) Delete(name string, options *v1.DeleteOptions) error {
+func (c *FakeRegistries) Delete(ctx context.Context, name string, options *v1.DeleteOptions) error {
 	_, err := c.Fake.
 		Invokes(testing.NewRootDeleteAction(registriesResource, name), &v1beta1.Registry{})
 	return err
 }
 
 // DeleteCollection deletes a collection of objects.
-func (c *FakeRegistries) DeleteCollection(options *v1.DeleteOptions, listOptions v1.ListOptions) error {
+func (c *FakeRegistries) DeleteCollection(ctx context.Context, options *v1.DeleteOptions, listOptions v1.ListOptions) error {
 	action := testing.NewRootDeleteCollectionAction(registriesResource, listOptions)
 
 	_, err := c.Fake.Invokes(action, &v1beta1.RegistryList{})
@@ -121,7 +123,7 @@ func (c *FakeRegistries) DeleteCollection(options *v1.DeleteOptions, listOptions
 }
 
 // Patch applies the patch and returns the patched registry.
-func (c *FakeRegistries) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1beta1.Registry, err error) {
+func (c *FakeRegistries) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1beta1.Registry, err error) {
 	obj, err := c.Fake.
 		Invokes(testing.NewRootPatchSubresourceAction(registriesResource, name, pt, data, subresources...), &v1beta1.Registry{})
 	if obj == nil {

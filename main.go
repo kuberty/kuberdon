@@ -4,10 +4,6 @@ package main
 
 import (
 	"flag"
-	"github.com/kuberty/kuberdon/pkg/apis/registry/v1beta1"
-	v1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/client-go/tools/cache"
 	"log"
 	"time"
 
@@ -61,46 +57,50 @@ func main() {
 	// define controller
 	mockSignalHandler := make(chan struct{})
 
-	exampleInformerFactory.Kuberdon().V1beta1().Registries().Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
-			registry := obj.(*v1beta1.Registry)
-			log.Printf("Added registry: %v", registry.Name)
-		} ,
-		UpdateFunc: func(old, new interface{}) {
-			registry := new.(*v1beta1.Registry).DeepCopy()
-			namespaces, err := kubeInformerFactory.Core().V1().Namespaces().Lister().List(labels.Everything())
-			if err != nil {
-				log.Panic(err)
-			}
-			if registry.GetLabels() == nil{
-				registry.SetLabels(map[string]string{})
-			}
-			labels := registry.GetLabels()
-			labels["a"] = "b"
-			registry.SetLabels(labels)
-			registry.SetNamespace("test")
-			r, err := exampleClient.KuberdonV1beta1().Registries().Update(registry)
-			log.Printf("R: %v, E: %v", r, err)
-			for _, n := range namespaces {
-				log.Printf("namespace: %v", n.Name)
-			}
-			log.Printf("Changed registry to: %v", registry.Spec.Namespaces[0].Name)
-		},
-	})
+	//exampleInformerFactory.Kuberdon().V1beta1().Registries().Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
+	//	AddFunc: func(obj interface{}) {
+	//		registry := obj.(*v1beta1.Registry)
+	//		log.Printf("Added registry: %v", registry.Name)
+	//	} ,
+	//	UpdateFunc: func(old, new interface{}) {
+	//		registry := new.(*v1beta1.Registry).DeepCopy()
+	//		namespaces, err := kubeInformerFactory.Core().V1().Namespaces().Lister().List(labels.Everything())
+	//		if err != nil {
+	//			log.Panic(err)
+	//		}
+	//		if registry.GetLabels() == nil{
+	//			registry.SetLabels(map[string]string{})
+	//		}
+	//		labels := registry.GetLabels()
+	//		labels["a"] = "b"
+	//		registry.SetLabels(labels)
+	//		registry.SetNamespace("test")
+	//		r, err := exampleClient.KuberdonV1beta1().Registries().Update(context.TODO(), registry, metav1.UpdateOptions{})
+	//		log.Printf("R: %v, E: %v", r, err)
+	//		for _, n := range namespaces {
+	//			log.Printf("namespace: %v", n.Name)
+	//		}
+	//		log.Printf("Changed registry to: %v", registry.Spec.Namespaces[0].Name)
+	//	},
+	//})
+	//
+	//kubeInformerFactory.Core().V1().Namespaces().Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
+	//	AddFunc: func(obj interface{}) {
+	//		namespace := obj.(*v1.Namespace)
+	//		log.Printf("Added namespace: %v", namespace.Name)
+	//	} ,
+	//	UpdateFunc: func(old, new interface{}) {
+	//		namespace := new.(*v1.Namespace)
+	//		log.Printf("Changed to namespace: %v", namespace.Name)
+	//	},
+	//})
 
-	kubeInformerFactory.Core().V1().Namespaces().Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
-			namespace := obj.(*v1.Namespace)
-			log.Printf("Added namespace: %v", namespace.Name)
-		} ,
-		UpdateFunc: func(old, new interface{}) {
-			namespace := new.(*v1.Namespace)
-			log.Printf("Changed to namespace: %v", namespace.Name)
-		},
-	})
-
+	c:=	listenToChanges(exampleInformerFactory, kubeInformerFactory)
 	kubeInformerFactory.Start(mockSignalHandler)
 	exampleInformerFactory.Start(mockSignalHandler)
+	for v := range c {
+		print("Updated %v", v)
+	}
 	for {
 		time.Sleep(10 * time.Second)
 	}
