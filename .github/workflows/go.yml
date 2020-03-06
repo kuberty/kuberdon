@@ -19,7 +19,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         repository: kubernetes/kubernetes
-        ref: v1.17.3
+        ref: v1.17.3  
         path: .
         
     - name: Check out code into the Go module directory
@@ -31,7 +31,8 @@ jobs:
     - name: Build
       run: | 
         export GOPATH=$PWD/staging
-        go build -v staging/src/github/com/kuberty/kuberdon/
+        cd staging/src/github/com/kuberty/kuberdon/
+        go build -v .
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -56,4 +57,5 @@ jobs:
     - name: Test
       run: |
         export GOPATH=$PWD/staging
-        go test staging/src/github/com/kuberty/kuberdon/...
+        cd staging/src/github/com/kuberty/kuberdon/
+        go test ./...
