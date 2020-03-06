@@ -17,10 +17,13 @@ jobs:
 
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
+      with:
+        path: go/src/github.com/kuberty/kuberdon
 
     - name: Get dependencies
       run: |
-        go get -v -t -d ./...
+        export GOPATH=$PWD/go
+        
 
     - name: Build
       run: go build -v .
@@ -37,10 +40,13 @@ jobs:
 
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
+      with:
+        path: go/src/github.com/kuberty/kuberdon
 
     - name: Get dependencies
       run: |
-        go get -v -t -d ./...
+        export GOPATH=$PWD/go
+        
 
     - name: Test
       run:  go test ./...
