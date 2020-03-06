@@ -17,7 +17,7 @@ jobs:
       
     - name: Get kubernetes and dependencies
       run: |
-        git clone https://github.com/kubernetes/kubernetes -C .
+        git clone https://github.com/kubernetes/kubernetes .
         git checkout v1.17.3
         
     - name: Check out code into the Go module directory
@@ -37,7 +37,7 @@ jobs:
 
     - name: Get kubernetes and dependencies
       run: |
-        git clone https://github.com/kubernetes/kubernetes -C .
+        git clone https://github.com/kubernetes/kubernetes .
         git checkout v1.17.3
         
     - name: Check out code into the Go module directory
