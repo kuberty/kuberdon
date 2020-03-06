@@ -31,7 +31,7 @@ jobs:
     - name: Build
       run: | 
         export GOPATH=$PWD/staging
-        cd staging/src/github/com/kuberty/kuberdon/
+        cd staging/src/github.com/kuberty/kuberdon/
         go build -v .
   test:
     name: Test
@@ -57,5 +57,5 @@ jobs:
     - name: Test
       run: |
         export GOPATH=$PWD/staging
-        cd staging/src/github/com/kuberty/kuberdon/
+        cd staging/src/github.com/kuberty/kuberdon/
         go test ./...
