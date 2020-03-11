@@ -1,4 +1,6 @@
 # Kuberdon
+<img src="https://github.com/kuberty/kuberdon/raw/master/logos/logo.png" width="100">
+
 **Stop copying your docker registry secrets to each namespace, use Kuberdon instead.**
 
 Kuberdon is a dead simple controller. It copies your secret to all desired namespaces and automatically binds them to the default serviceaccount. Pods will then automatically use them.
