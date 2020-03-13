@@ -1,3 +1,4 @@
+KUBERDON IS CURRENTLY BEING DEVELOPED IN A [SEPARATE REPOSITORY](https://github.com/kuberty/kubebuilder-kuberdon).
 # Kuberdon
 <img src="https://github.com/kuberty/kuberdon/raw/master/logos/logo.png" width="100">
 
